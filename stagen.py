@@ -17,6 +17,8 @@ TEMPLATE_PATH="/etc/stagen/templates/default/template.html"
 PARAMETERS_PATH="/etc/stagen/params.yaml"
 DEFAULT_EMPTY_FILE="/etc/stagen/index.md"
 DESTINATION_FOLDER_NAME="html"
+
+
 class Processor:
     def __init__(self):
         self.markdown=markdown.Markdown()
@@ -122,21 +124,19 @@ if __name__ == '__main__':
     parser=argparse.ArgumentParser(description="Stagen: Static site generator in Python")
     parser.add_argument("-n", "--new", metavar="dir", type=str, help="create a new site in the provided directory")
     
-    parser.add_argument("build", nargs="?", const=".", 
-                        help="parse .md files in the current directory and store HTML results in dir"  )
-    parser.set_defaults(build=".")
     
     args=parser.parse_args()
-    
+    print args
     processor=Processor()
         
     if args.new:
+        print args.new
         print "Building a new site in "+args.new+"..."
         stagen=Stagen()
         stagen.tree_creator(args.new)
         sys.exit()
-    if args.build:
+    else:
         print "Building this site..."
         file_traverser=FileTraverser()
         
-        file_traverser.traverse(args.build)
+        file_traverser.traverse(".")
