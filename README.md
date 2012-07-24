@@ -12,4 +12,5 @@ To create a new site just type:
 Populate the new directory with files with the extension .md (and of course written using Markdown syntax) and then build your site with
 
 ::
+
 	stagen.py build
