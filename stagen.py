@@ -14,15 +14,17 @@ import shutil
 import argparse
 
 
-PARAMETERS_PATH     =   "~/repos/stagen/params.cfg"
+PARAMETERS_PATH     =   "./params.cfg"
 
 config_file =ConfigParser.RawConfigParser()
 config_file.read(PARAMETERS_PATH)
+print config_file.has_section("basic_parameters")
 
 TEMPLATE_PATH       =   config_file.get("basic_parameters", "TEMPLATE_PATH")
 DEFAULT_EMPTY_FILE  =   config_file.get("basic_parameters", "DEFAULT_EMPTY_FILE")
 DESTINATION_FOLDER_NAME=config_file.get("basic_parameters", "DESTINATION_FOLDER_NAME")
-
+SITE_TITLE             =config_file.get("basic_parameters", "SITE_TITLE")
+LANG                   =config_file.get("basic_parameters", "LANG")
         
 class Processor:
     def __init__(self):
@@ -31,8 +33,8 @@ class Processor:
     def get_template_elements(self):
         """ Auxiliary function that extracts all parameters from the configuration file """
         elements=dict()
-        elements['title']   =   self.get_parameter("SITE_TITLE")
-        elements['lang']    =   self.get_parameter("LANG")
+        elements['title']   =   SITE_TITLE
+        elements['lang']    =   LANG
         return elements
     def get_parameter(self, param, section="basic_parameters"):
         """ Extract a parameter from the configuration file"""

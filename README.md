@@ -12,3 +12,13 @@ Populate the new directory with files with the extension .md (and of course writ
 
 
 	stagen.py build
+
+Requirements
+============
+
+To use it you will need
+
+* A working Python environment
+* Install Cheetah, a Python template engine (http://www.cheetahtemplate.org)
+* Install Markdown, a Python package to process Markdown files (http://pypi.python.org/pypi/Markdown#downloads)
+* Have a basic knowledge of Markdown syntax (http://pypi.python.org/pypi/Markdown#downloads)
