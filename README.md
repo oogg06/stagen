@@ -29,3 +29,4 @@ Use
 1. Edit the params.cfg file and modify the SITE_TILE (all your pages will show this message). Edit also the LANG parameter to the language you will use in your website
 2. Edit the template.html file. This file has a basic HTML structure and header. All your pages will have this structure. You can also edit the CSS ;)
 3. Edit the index.md and write all your thoughts. You can create also new .md files and fill them with whatever you want. Remember that when creating links you will have to link to .html result files, not .md files!
+4. Run stagen.py and visit the newly-created html directory. There you will find your website in HTML
