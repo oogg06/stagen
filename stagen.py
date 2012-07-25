@@ -13,18 +13,21 @@ import sys
 import shutil
 import argparse
 
-TEMPLATE_PATH="/etc/stagen/templates/default/template.html"
-PARAMETERS_PATH="/etc/stagen/params.yaml"
-DEFAULT_EMPTY_FILE="/etc/stagen/index.md"
-DESTINATION_FOLDER_NAME="html"
 
+PARAMETERS_PATH     =   "~/repos/stagen/params.cfg"
 
+config_file =ConfigParser.RawConfigParser()
+config_file.read(PARAMETERS_PATH)
+
+TEMPLATE_PATH       =   config_file.get("basic_parameters", "TEMPLATE_PATH")
+DEFAULT_EMPTY_FILE  =   config_file.get("basic_parameters", "DEFAULT_EMPTY_FILE")
+DESTINATION_FOLDER_NAME=config_file.get("basic_parameters", "DESTINATION_FOLDER_NAME")
+
+        
 class Processor:
     def __init__(self):
         self.markdown=markdown.Markdown()
-        self.config_file=ConfigParser.RawConfigParser()
-        self.config_file.read(PARAMETERS_PATH)
-        
+
     def get_template_elements(self):
         """ Auxiliary function that extracts all parameters from the configuration file """
         elements=dict()
