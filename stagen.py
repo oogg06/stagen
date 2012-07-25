@@ -18,7 +18,7 @@ PARAMETERS_PATH     =   "./params.cfg"
 
 config_file =ConfigParser.RawConfigParser()
 config_file.read(PARAMETERS_PATH)
-print config_file.has_section("basic_parameters")
+
 
 TEMPLATE_PATH       =   config_file.get("basic_parameters", "TEMPLATE_PATH")
 DEFAULT_EMPTY_FILE  =   config_file.get("basic_parameters", "DEFAULT_EMPTY_FILE")
@@ -69,7 +69,7 @@ class Processor:
         the_template_file=open(TEMPLATE_PATH)
         
         destination_filename=self.build_destination_filename(filename)
-        print "Destination:"+destination_filename
+        print "HTML result file stored in:"+destination_filename
         #We need to ensure that the destination directory (included in destination_filename really exists
         self.ensure_dir(destination_filename)
         #The new file will have the same name, but replacing the extension ".md" with ".html"
@@ -102,7 +102,7 @@ class FileTraverser:
             for f in files:
                 if self.is_markdown_file(f):
                     path_name=os.path.join(root, f)
-                    print "Markdown:"+path_name
+                    print "Found markdown file:"+path_name+", processing it..."
                     processor.process_file(path_name)
                 else:
                     pass
@@ -131,11 +131,11 @@ if __name__ == '__main__':
     
     
     args=parser.parse_args()
-    print args
+    #print args
     processor=Processor()
         
     if args.new:
-        print args.new
+        
         print "Building a new site in "+args.new+"..."
         stagen=Stagen()
         stagen.tree_creator(args.new)
