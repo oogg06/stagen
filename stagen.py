@@ -14,7 +14,7 @@ import shutil
 import argparse
 
 
-PARAMETERS_PATH     =   "./params.cfg"
+PARAMETERS_PATH     =   "/home/oscar/repos/stagen/params.cfg"
 
 config_file =ConfigParser.RawConfigParser()
 config_file.read(PARAMETERS_PATH)
@@ -23,6 +23,7 @@ config_file.read(PARAMETERS_PATH)
 TEMPLATE_PATH       =   config_file.get("basic_parameters", "TEMPLATE_PATH")
 DEFAULT_EMPTY_FILE  =   config_file.get("basic_parameters", "DEFAULT_EMPTY_FILE")
 DESTINATION_FOLDER_NAME=config_file.get("basic_parameters", "DESTINATION_FOLDER_NAME")
+print "Destination is "+DESTINATION_FOLDER_NAME
 SITE_TITLE             =config_file.get("basic_parameters", "SITE_TITLE")
 LANG                   =config_file.get("basic_parameters", "LANG")
         
@@ -46,17 +47,28 @@ class Processor:
         if not os.path.exists(d):
             os.makedirs(d)
     
-        
-    def build_destination_filename(self, filename):
-        filename=filename[:-3]+".html"
+    
+    def add_folder_name_to_filename(self, filename):
         if filename[0:2]=="./":
             return os.path.join(DESTINATION_FOLDER_NAME, filename[2:])
         return os.path.join(DESTINATION_FOLDER_NAME, filename)
+        
+    def build_destination_filename(self, filename):
+        (name, extension)=os.path.splitext(filename)
+        filename=name+".html"
+        return self.add_folder_name_to_filename(filename)
         
     def process_file(self, filename):
         """ Reads a file, converts it from Markdown to HTML and inserts
         the converted HTML into a template
         """
+        
+        #If the filename is not a Markdown file, copy it as is and stop
+        if not self.is_markdown_file(filename):
+            destination_filename=self.add_folder_name_to_filename(filename)
+            self.ensure_dir(destination_filename)
+            shutil.copy(filename, destination_filename)
+            return
         
         #This file uses Markdown syntax
         the_file=codecs.open(filename, mode="r", encoding="utf-8")
@@ -71,8 +83,13 @@ class Processor:
         destination_filename=self.build_destination_filename(filename)
         print "HTML result file stored in:"+destination_filename
         #We need to ensure that the destination directory (included in destination_filename really exists
+        
         self.ensure_dir(destination_filename)
-        #The new file will have the same name, but replacing the extension ".md" with ".html"
+        
+        
+        
+        
+        #The new HTML file will have the same name, but replacing the extension ".md" with ".html"
         the_html_result=open(destination_filename, "w+")
         
         #This template is rendered by Cheetah
@@ -81,32 +98,42 @@ class Processor:
         
         the_html_result.write(str(template))
         the_html_result.close()
-        
-        
-        
-        
-class FileTraverser:
-    def __init__(self):
-        pass
+
     def is_markdown_file(self, filename):
-        extension=filename[-3:]
+        (filename, extension)=os.path.splitext(filename)
         if (extension==".md"):
+            print filename + " is a markdown file"
             return True
         return False
     
+    
     def traverse(self, directory):
-        processor=Processor()
+        
         for root, dirs, files in os.walk(directory):
+            folder_to_visit=os.path.join(directory,)
+            print "Folder to visit is "+folder_to_visit
+            if DESTINATION_FOLDER_NAME in dirs:
+                    dirs.remove(DESTINATION_FOLDER_NAME)
+            for f in files:
+                path_name=os.path.join(root, f)
+                #print "Processing "+path_name
+                self.process_file(path_name)
+                        
+    def traverse2(self, directory):
+        print "Traversing to avoid "+DESTINATION_FOLDER_NAME
+        for root, dirs, files in os.walk(directory):
+            print "Dir is:"+dirs
+            print "Destination is:"+DESTINATION_FOLDER_NAME
             if dirs==DESTINATION_FOLDER_NAME:
+                print "Avoiding "+str(dirs)
                 continue
             for f in files:
-                if self.is_markdown_file(f):
-                    path_name=os.path.join(root, f)
-                    print "Found markdown file:"+path_name+", processing it..."
-                    processor.process_file(path_name)
-                else:
-                    pass
-
+                path_name=os.path.join(root, f)
+                self.process_file(path_name)
+    
+        
+        
+    
 class Stagen:
     def __init__(self):
         pass
@@ -141,7 +168,4 @@ if __name__ == '__main__':
         stagen.tree_creator(args.new)
         sys.exit()
     else:
-        print "Building this site..."
-        file_traverser=FileTraverser()
-        
-        file_traverser.traverse(".")
+        processor.traverse(".")
